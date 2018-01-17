@@ -1,4 +1,5 @@
 import Flatpickr from 'flatpickr';
+import settings from '../../globals/js/settings';
 import mixin from '../../globals/js/misc/mixin';
 import createComponent from '../../globals/js/mixins/create-component';
 import initComponentBySearch from '../../globals/js/mixins/init-component-by-search';
@@ -16,6 +17,29 @@ function flattenOptions(options) {
     o[key] = options[key];
   }
   return o;
+}
+
+/**
+ * Augments Flatpickr instance so that event objects Flatpickr fires is marked as non-user-triggered events.
+ * @param {Flatpickr} calendar The Flatpickr instance.
+ * @returns {Flatpickr} The augmented Flatpickr instance.
+ * @private
+ */
+function augmentFlatpickr(calendar) {
+  const container = calendar._;
+  if (container.changeEvent) {
+    container._changeEvent = container.changeEvent; // eslint-disable-line no-underscore-dangle
+  }
+  Object.defineProperty(container, 'changeEvent', {
+    get() {
+      return this._changeEvent;
+    },
+    set(value) {
+      value.detail = Object.assign(value.detail || {}, { fromFlatpickr: true });
+      this._changeEvent = value;
+    },
+  });
+  return calendar;
 }
 
 // Weekdays shorthand for english locale
@@ -76,16 +100,16 @@ class DatePicker extends mixin(createComponent, initComponentBySearch, handles) 
             } else {
               this.element.querySelector(this.options.selectorDatePickerInputTo).focus();
             }
-            this.element.querySelector(this.options.selectorDatePickerInputTo).classList.remove('bx--focused');
+            this.element.querySelector(this.options.selectorDatePickerInputTo).classList.remove(this.options.classFocused);
           }
         },
         onChange: () => {
           this._updateClassNames(calendar);
           if (type === 'range') {
             if (calendar.selectedDates.length === 1 && calendar.isOpen) {
-              this.element.querySelector(this.options.selectorDatePickerInputTo).classList.add('bx--focused');
+              this.element.querySelector(this.options.selectorDatePickerInputTo).classList.add(this.options.classFocused);
             } else {
-              this.element.querySelector(this.options.selectorDatePickerInputTo).classList.remove('bx--focused');
+              this.element.querySelector(this.options.selectorDatePickerInputTo).classList.remove(this.options.classFocused);
             }
           }
         },
@@ -119,7 +143,7 @@ class DatePicker extends mixin(createComponent, initComponentBySearch, handles) 
     );
     this._updateClassNames(calendar);
     this._addInputLogic(date);
-    return calendar;
+    return augmentFlatpickr(calendar);
   };
 
   _rightArrowHTML() {
@@ -139,10 +163,12 @@ class DatePicker extends mixin(createComponent, initComponentBySearch, handles) 
   _addInputLogic = input => {
     const inputField = input;
     this.manage(
-      on(inputField, 'change', () => {
-        const inputDate = this.calendar.parseDate(inputField.value);
-        if (!isNaN(inputDate.valueOf())) {
-          this.calendar.setDate(inputDate);
+      on(inputField, 'change', evt => {
+        if (!evt.detail || !evt.detail.fromFlatpickr) {
+          const inputDate = this.calendar.parseDate(inputField.value);
+          if (!isNaN(inputDate.valueOf())) {
+            this.calendar.setDate(inputDate);
+          }
         }
         this._updateClassNames(this.calendar);
       })
@@ -203,21 +229,25 @@ class DatePicker extends mixin(createComponent, initComponentBySearch, handles) 
    * properties in this object are overriden for the instance being create and how {@linkcode DatePicker.init .init()} works.
    * @property {string} selectorInit The CSS selector to find date picker UIs.
    */
-  static options = {
-    selectorInit: '[data-date-picker]',
-    selectorDatePickerInput: '[data-date-picker-input]',
-    selectorDatePickerInputFrom: '[data-date-picker-input-from]',
-    selectorDatePickerInputTo: '[data-date-picker-input-to]',
-    selectorDatePickerIcon: '[data-date-picker-icon]',
-    classCalendarContainer: 'bx--date-picker__calendar',
-    classMonth: 'bx--date-picker__month',
-    classWeekdays: 'bx--date-picker__weekdays',
-    classDays: 'bx--date-picker__days',
-    classWeekday: 'bx--date-picker__weekday',
-    classDay: 'bx--date-picker__day',
-    attribType: 'data-date-picker-type',
-    dateFormat: 'm/d/Y',
-  };
+  static get options() {
+    const { prefix } = settings;
+    return {
+      selectorInit: '[data-date-picker]',
+      selectorDatePickerInput: '[data-date-picker-input]',
+      selectorDatePickerInputFrom: '[data-date-picker-input-from]',
+      selectorDatePickerInputTo: '[data-date-picker-input-to]',
+      selectorDatePickerIcon: '[data-date-picker-icon]',
+      classCalendarContainer: `${prefix}--date-picker__calendar`,
+      classMonth: `${prefix}--date-picker__month`,
+      classWeekdays: `${prefix}--date-picker__weekdays`,
+      classDays: `${prefix}--date-picker__days`,
+      classWeekday: `${prefix}--date-picker__weekday`,
+      classDay: `${prefix}--date-picker__day`,
+      classFocused: `${prefix}--focused`,
+      attribType: 'data-date-picker-type',
+      dateFormat: 'm/d/Y',
+    };
+  }
 
   /**
    * The map associating DOM element and date picker UI instance.

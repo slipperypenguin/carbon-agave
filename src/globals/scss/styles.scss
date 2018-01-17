@@ -15,6 +15,7 @@ $css--plex: true !default;
 @import 'mixins';
 @import 'layout';
 @import 'layer';
+@import 'spacing';
 @import 'typography';
 @import 'import-once';
 @import 'css--reset';
@@ -51,6 +52,7 @@ $deprecations--message: 'Deprecated code was found, this code will be removed be
 @import '../../components/copy-button/copy-button';
 @import '../../components/file-uploader/file-uploader';
 @import '../../components/checkbox/checkbox';
+@import '../../components/combo-box/combo-box';
 @import '../../components/radio-button/radio-button';
 @import '../../components/toggle/toggle';
 @import '../../components/search/search';
@@ -75,6 +77,7 @@ $deprecations--message: 'Deprecated code was found, this code will be removed be
 @import '../../components/loading/loading';
 @import '../../components/modal/modal';
 @import '../../components/module/module';
+@import '../../components/multi-select/multi-select';
 @import '../../components/notification/inline-notification';
 @import '../../components/notification/toast-notification';
 @import '../../components/tooltip/tooltip';

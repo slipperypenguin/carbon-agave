@@ -1,3 +1,4 @@
+import settings from '../../globals/js/settings';
 import mixin from '../../globals/js/misc/mixin';
 import createComponent from '../../globals/js/mixins/create-component';
 import initComponentBySearch from '../../globals/js/mixins/init-component-by-search';
@@ -27,11 +28,17 @@ class OverflowMenu extends mixin(createComponent, initComponentBySearch, evented
     this.manage(
       on(this.element.ownerDocument, 'click', event => {
         this._handleDocumentClick(event);
+        this.wasOpenBeforeClick = undefined;
       })
     );
     this.manage(
       on(this.element.ownerDocument, 'keypress', event => {
         this._handleKeyPress(event);
+      })
+    );
+    this.manage(
+      on(this.element, 'mousedown', () => {
+        this.wasOpenBeforeClick = element.classList.contains(this.options.classShown);
       })
     );
   }
@@ -75,7 +82,7 @@ class OverflowMenu extends mixin(createComponent, initComponentBySearch, evented
   _handleDocumentClick(event) {
     const element = this.element;
     const isOfSelf = element.contains(event.target);
-    const shouldBeOpen = isOfSelf && !element.classList.contains(this.options.classShown);
+    const shouldBeOpen = isOfSelf && !this.wasOpenBeforeClick;
     const state = shouldBeOpen ? 'shown' : 'hidden';
 
     if (isOfSelf) {
@@ -114,15 +121,18 @@ class OverflowMenu extends mixin(createComponent, initComponentBySearch, evented
 
   static components = new WeakMap();
 
-  static options = {
-    selectorInit: '[data-overflow-menu]',
-    selectorOptionMenu: '.bx--overflow-menu-options',
-    classShown: 'bx--overflow-menu--open',
-    classMenuShown: 'bx--overflow-menu-options--open',
-    classMenuFlip: 'bx--overflow-menu--flip',
-    objMenuOffset: { top: 3, left: 61 },
-    objMenuOffsetFlip: { top: 3, left: -61 },
-  };
+  static get options() {
+    const { prefix } = settings;
+    return {
+      selectorInit: '[data-overflow-menu]',
+      selectorOptionMenu: `.${prefix}--overflow-menu-options`,
+      classShown: `${prefix}--overflow-menu--open`,
+      classMenuShown: `${prefix}--overflow-menu-options--open`,
+      classMenuFlip: `${prefix}--overflow-menu--flip`,
+      objMenuOffset: { top: 3, left: 61 },
+      objMenuOffsetFlip: { top: 3, left: -61 },
+    };
+  }
 }
 
 export default OverflowMenu;
