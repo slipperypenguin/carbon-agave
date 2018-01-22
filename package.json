@@ -2,7 +2,7 @@
   "name": "carbon-agave",
   "description": "Carbon Components is a component library for IBM Cloud",
   "homepage": "http://carbondesignsystem.com/",
-  "version": "8.6.0",
+  "version": "8.7.1",
   "module": "es/index.js",
   "main": "umd/index.js",
   "repository": {
