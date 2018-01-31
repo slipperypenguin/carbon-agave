@@ -7,6 +7,7 @@
 @import '../../globals/scss/helper-mixins';
 @import '../../globals/scss/layer';
 @import '../../globals/scss/typography';
+@import '../../globals/scss/spacing';
 @import '../../globals/scss/import-once';
 @import '../../globals/scss/css--reset';
 @import '../../globals/scss/css--typography';
@@ -56,8 +57,8 @@
     height: rem(40px);
     padding-top: rem(13px);
     padding-bottom: rem(13px);
-    padding-left: 1rem;
-    padding-right: 2.25rem;
+    padding-left: $spacing-md;
+    padding-right: $spacing-2xl;
     font-weight: 600;
     white-space: nowrap;
     overflow: hidden;
@@ -68,13 +69,21 @@
   .#{$prefix}--dropdown-list {
     @include reset;
     @include layer('overlay');
+    @include typescale('zeta');
+    background-color: $ui-01;
+    display: flex;
+    flex-direction: column;
     width: 100%;
     list-style: none;
     position: absolute;
     z-index: z('dropdown');
     max-height: 0;
+    transition: max-height $transition--expansion $carbon--ease-out;
     overflow: hidden;
-    transition: $transition--expansion $carbon--ease-out;
+  }
+
+  .#{$prefix}--dropdown-item {
+    transition: opacity $transition--expansion $carbon--ease-out;
     opacity: 0;
   }
 
@@ -82,10 +91,7 @@
     display: block;
     color: currentColor;
     text-decoration: none;
-    padding-top: 1rem;
-    padding-bottom: 1rem;
-    padding-left: 1rem;
-    padding-right: 1.5rem;
+    padding: $spacing-md $spacing-lg $spacing-md $spacing-md;
     text-overflow: ellipsis;
     overflow: hidden;
 
@@ -108,20 +114,18 @@
     }
 
     .#{$prefix}--dropdown-list {
-      @include typescale('zeta');
-      display: flex;
-      flex-direction: column;
-      background-color: $ui-01;
       max-height: 15rem;
       overflow: auto;
-      transition: $transition--expansion $carbon--ease-in;
-      opacity: 1;
     }
 
     &:focus {
       .#{$prefix}--dropdown-list {
         box-shadow: 0 1px 0 0 $brand-01, 1px 0 0 0 $brand-01, -1px 0 0 0 $brand-01;
       }
+    }
+
+    .#{$prefix}--dropdown-item {
+      opacity: 1;
     }
   }
 
