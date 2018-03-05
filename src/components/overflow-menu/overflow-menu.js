@@ -8,6 +8,31 @@ import FloatingMenu from '../floating-menu/floating-menu';
 import getLaunchingDetails from '../../globals/js/misc/get-launching-details';
 import on from '../../globals/js/misc/on';
 
+/**
+ * @param {Element} menuBody The menu body with the menu arrow.
+ * @returns {FloatingMenu~offset} The adjustment of the floating menu position, upon the position of the menu arrow.
+ * @private
+ */
+export const getMenuOffset = menuBody => {
+  const menuWidth = menuBody.offsetWidth;
+  const arrowStyle = menuBody.ownerDocument.defaultView.getComputedStyle(menuBody, ':before');
+  const values = ['top', 'left', 'width', 'height', 'border-top-width'].reduce(
+    (o, name) => ({
+      ...o,
+      [name]: Number((/^([\d-]+)px$/.exec(arrowStyle.getPropertyValue(name)) || [])[1]),
+    }),
+    {}
+  );
+  if (Object.keys(values).every(name => !isNaN(values[name]))) {
+    const { top, left, width, height, 'border-top-width': borderTopWidth } = values;
+    return {
+      left: menuWidth / 2 - (left + Math.sqrt(width ** 2 + height ** 2) / 2),
+      top: Math.sqrt(borderTopWidth ** 2 * 2) - top,
+    };
+  }
+  return undefined;
+};
+
 class OverflowMenu extends mixin(createComponent, initComponentBySearch, eventedShowHideState, handles) {
   /**
    * Overflow menu.
@@ -80,9 +105,10 @@ class OverflowMenu extends mixin(createComponent, initComponentBySearch, evented
    * @private
    */
   _handleDocumentClick(event) {
-    const element = this.element;
+    const { element, optionMenu, wasOpenBeforeClick } = this;
     const isOfSelf = element.contains(event.target);
-    const shouldBeOpen = isOfSelf && !this.wasOpenBeforeClick;
+    const isOfMenu = optionMenu && optionMenu.element.contains(event.target);
+    const shouldBeOpen = isOfSelf && !wasOpenBeforeClick;
     const state = shouldBeOpen ? 'shown' : 'hidden';
 
     if (isOfSelf) {
@@ -92,7 +118,11 @@ class OverflowMenu extends mixin(createComponent, initComponentBySearch, evented
       event.delegateTarget = element; // eslint-disable-line no-param-reassign
     }
 
-    this.changeState(state, getLaunchingDetails(event));
+    this.changeState(state, getLaunchingDetails(event), () => {
+      if (state === 'hidden' && isOfMenu) {
+        element.focus();
+      }
+    });
   }
 
   /**
@@ -103,9 +133,10 @@ class OverflowMenu extends mixin(createComponent, initComponentBySearch, evented
   _handleKeyPress(event) {
     const key = event.which;
     if (key === 13) {
-      const element = this.element;
+      const { element, optionMenu, options } = this;
       const isOfSelf = element.contains(event.target);
-      const shouldBeOpen = isOfSelf && !element.classList.contains(this.options.classShown);
+      const isOfMenu = optionMenu && optionMenu.element.contains(event.target);
+      const shouldBeOpen = isOfSelf && !element.classList.contains(options.classShown);
       const state = shouldBeOpen ? 'shown' : 'hidden';
 
       if (isOfSelf) {
@@ -115,7 +146,11 @@ class OverflowMenu extends mixin(createComponent, initComponentBySearch, evented
         event.delegateTarget = element; // eslint-disable-line no-param-reassign
       }
 
-      this.changeState(state, getLaunchingDetails(event));
+      this.changeState(state, getLaunchingDetails(event), () => {
+        if (state === 'hidden' && isOfMenu) {
+          element.focus();
+        }
+      });
     }
   }
 
@@ -129,8 +164,8 @@ class OverflowMenu extends mixin(createComponent, initComponentBySearch, evented
       classShown: `${prefix}--overflow-menu--open`,
       classMenuShown: `${prefix}--overflow-menu-options--open`,
       classMenuFlip: `${prefix}--overflow-menu--flip`,
-      objMenuOffset: { top: 3, left: 61 },
-      objMenuOffsetFlip: { top: 3, left: -61 },
+      objMenuOffset: getMenuOffset,
+      objMenuOffsetFlip: getMenuOffset,
     };
   }
 }
