@@ -13,7 +13,9 @@
 @import '../js/components/SideNavToggle/side-nav-toggle.scss';
 
 [data-renderroot] {
-  .component-example__live {
+  display: block;
+
+  .component-example__live--with-iframe {
     height: 25rem;
 
     iframe {
@@ -35,9 +37,20 @@
       width: 0;
     }
   }
+
+  .component-example__live--rendered {
+    .bx--interior-left-nav--collapseable .bx--interior-left-nav-collapse {
+      display: flex;
+    }
+
+    .bx--interior-left-nav.bx--interior-left-nav--collapsed {
+      width: 3rem;
+    }
+  }
 }
 
 .demo--container {
+  display: block;
   box-sizing: border-box;
   padding-top: 1em;
   transition: 0.2s;
