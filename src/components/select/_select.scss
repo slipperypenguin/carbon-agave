@@ -21,10 +21,11 @@
   .#{$prefix}--select-input {
     @include font-family;
     @include typescale('zeta');
+    height: rem(40px);
     appearance: none;
     display: block;
     width: 100%;
-    padding: $spacing-sm $spacing-2xl $spacing-sm $spacing-md;
+    padding: 0 $spacing-2xl 0 $spacing-md;
     color: $text-01;
     background-color: $field-01;
     border: $input-border;
@@ -59,6 +60,11 @@
   .#{$prefix}--select-optgroup,
   .#{$prefix}--select-option {
     color: $text-01; // For the options to show in IE11
+  }
+
+  .#{$prefix}--select-option[disabled] {
+    opacity: 0.5;
+    cursor: not-allowed;
   }
 
   // Override some Firefox user-agent styles
