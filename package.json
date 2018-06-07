@@ -89,7 +89,7 @@
     "gulp-jsdoc3": "^0.2.1",
     "gulp-nodemon": "^2.2.0",
     "gulp-rename": "^1.2.2",
-    "gulp-sass": "2.3.1",
+    "gulp-sass": "2.3.2",
     "gulp-sass-lint": "~1.1.1",
     "gulp-sourcemaps": "~1.6.0",
     "gulp-uglify": "^2.1.2",
@@ -201,6 +201,7 @@
   "lint-staged": {
     "*.js": [
       "prettier:staged",
+      "lint:staged",
       "git add"
     ],
     "*.{css,scss}": [
