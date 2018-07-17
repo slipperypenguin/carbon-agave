@@ -23,6 +23,7 @@
     transition: $transition--base $carbon--standard-easing;
     cursor: pointer;
     margin: $spacing-md 0;
+    color: $text-01;
   }
 
   .#{$prefix}--toggle__appearance {
@@ -86,7 +87,7 @@
   }
 
   .#{$prefix}--toggle__check {
-    fill: $ui-05;
+    fill: $ui-04;
     position: absolute;
     left: 6px;
     top: 6px;

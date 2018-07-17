@@ -66,7 +66,7 @@ class Tab extends ContentSwitcher {
     const trigger = eventMatches(event, this.options.selectorTrigger);
     if (button) {
       super._handleClick(event);
-      this._updateMenuState();
+      this._updateMenuState(false);
     }
     if (trigger) {
       this._updateMenuState();
@@ -80,11 +80,12 @@ class Tab extends ContentSwitcher {
    * @param {Event} event The event triggering this method.
    */
   _handleKeyDown(event) {
-    const triggerNode = this.element.querySelector(this.options.selectorTrigger);
-    if (triggerNode && triggerNode.offsetParent) {
+    const triggerNode = eventMatches(event, this.options.selectorTrigger);
+    if (triggerNode) {
       if (event.which === 13) {
         this._updateMenuState();
       }
+      return;
     }
 
     const direction = {
@@ -112,11 +113,12 @@ class Tab extends ContentSwitcher {
 
   /**
    * Shows/hides the drop down menu used in narrow mode.
+   * @param {boolean} [force] `true` to show the menu, `false` to hide the menu, otherwise toggles the menu.
    */
-  _updateMenuState() {
+  _updateMenuState(force) {
     const menu = this.element.querySelector(this.options.selectorMenu);
     if (menu) {
-      menu.classList.toggle(this.options.classHidden);
+      menu.classList.toggle(this.options.classHidden, typeof force === 'undefined' ? force : !force);
     }
   }
 
