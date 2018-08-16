@@ -1,4 +1,6 @@
+@import '../../globals/scss/helper-mixins';
 @import '../../globals/scss/import-once';
+@import '../../globals/scss/vars';
 
 @include exports('data-table-v2-skeleton') {
   .#{$prefix}--data-table-v2.#{$prefix}--skeleton {
@@ -28,12 +30,12 @@
 
     tr:hover {
       td {
-        border-color: $ui-04;
+        border-color: $ui-03;
         background: transparent;
 
         &:first-of-type,
         &:last-of-type {
-          border-color: $ui-04;
+          border-color: $ui-03;
         }
       }
     }
