@@ -9,6 +9,7 @@
 @import '../../globals/scss/layer';
 @import '../../globals/scss/import-once';
 @import '../../globals/scss/vars';
+@import '../../globals/scss/theme';
 
 $list-box-width: 100%;
 $list-box-height: rem(40px);
@@ -253,11 +254,22 @@ $list-box-menu-width: rem(300px);
     color: $text-01;
   }
 
+  .bx--list-box__menu-item .bx--checkbox-label {
+    width: 100%;
+  }
+
+  .bx--list-box__menu-item .bx--checkbox-label-text {
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+  }
+
   // Tweaks for descendants
 
   // In multi-select scenarios, we need to target checkbox inputs
   .#{$prefix}--list-box__menu-item > .#{$prefix}--form-item.#{$prefix}--checkbox-wrapper {
     margin: 0;
+    width: 100%;
   }
 
   // When handling input, we need to target nodes that specifically opt-in to

@@ -4,6 +4,7 @@
 
 @import '../../globals/scss/colors';
 @import '../../globals/scss/vars';
+@import '../../globals/scss/theme';
 @import '../../globals/scss/helper-mixins';
 @import '../../globals/scss/layer';
 @import '../../globals/scss/typography';
@@ -152,6 +153,11 @@
     &:focus {
       outline: none;
     }
+  }
+
+  .#{$prefix}--dropdown--auto-width {
+    width: auto;
+    max-width: rem(400px);
   }
 
   .#{$prefix}--dropdown--inline {
